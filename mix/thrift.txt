@@ -1,0 +1,65 @@
+1 download
+http://archive.apache.org/dist/thrift/0.11.0/
+
+2 文档学习
+java
+	https://www.ibm.com/developerworks/cn/java/j-lo-apachethrift/index.html
+
+	专栏
+	https://blog.csdn.net/column/details/16012.html
+
+cpp
+	windows 编译
+	https://cognitivewaves.wordpress.com/apache-thrift-on-windows/
+
+	https://blog.csdn.net/guxch/article/details/12157151
+
+	https://blog.csdn.net/liulongling/article/details/51886626
+
+	http://www.cnblogs.com/lizhenghn/p/5247266.html
+
+	!!! vs2015  ***NuGet***
+	https://blog.csdn.net/hpyMiss/article/details/80110768
+	https://blog.csdn.net/xie1xiao1jun/article/details/53332504
+
+VS2010
+https://blog.csdn.net/colouroo/article/details/38588297
+
+
+https://blog.csdn.net/tanningzhong/article/details/52890792
+
+My final：
+
+
+1 下载
+https://github.com/apache/thrift
+
+2 用vs2015打开thrift
+...\thrift-0.11.0\lib\cpp\thrift.sln
+
+3 依赖安装
+  右击项目，选择 管理NuGet安装包，安装依赖，
+  boost: boost-1.68.0
+  openssl: openssl-vc140-static-32_64
+  libevent: libevent2-vc140 2.1.8
+
+4 修改
+ a config.h 问题
+  thrift-0.11.0\lib\cpp\src\thrift\thrift-config.h 为
+  thrift-0.11.0\lib\cpp\src\thrift\config.h
+
+  或者
+  THttpserver.cpp与THttpclient.cpp中的
+	//#include <thrift/config.h>此行改为
+	#include <thrift/thrift.h>
+	此参考http://myqzz.net/2018/03/18/thrift/
+
+ b PACKAGE_VERSION 问题；
+	//在<thrift/thrift-config.h>中
+	#define PACKAGE_VERSION  "${PACKAGE_VERSION}"
+	此参考http://myqzz.net/2018/03/18/thrift/
+
+5 参考
+  依赖安装参考：
+  https://blog.csdn.net/hpyMiss/article/details/80110768
+abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz0

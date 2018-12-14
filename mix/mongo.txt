@@ -1,0 +1,9 @@
+mongo
+use uc
+db.auth("uc","colomb1a")
+use license
+
+db.Device.update({'sn':'F56432256CBB96CC'},{$set:{'info': null, 'requestContent': null}})
+
+db.Authority.find({'sn':{$eq: 'F56432256CBB970F'}})
+db.Device.update({'sn':{$eq: 'lv'}},{$set:{'info':null, 'requestContent': null}},false,true);

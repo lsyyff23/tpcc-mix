@@ -1,0 +1,20 @@
+
+redis集群
+redis-trib.rb create --replicas 1 127.0.0.1:17000  127.0.0.1:17001  127.0.0.1:17002  127.0.0.1:17003  127.0.0.1:17004  127.0.0.1:17005
+
+yum update ruby
+yum install rubygems
+gem install redis
+sudo yum install curl
+curl -L get.rvm.io | bash -s stable 
+curl -sSL https://rvm.io/mpapis.asc | gpg2 --import -
+curl -L get.rvm.io | bash -s stable 
+source /usr/local/rvm/scripts/rvm
+rvm list known
+rvm install  2.5.1
+ruby --version
+rvm remove 2.0.0
+gem install redis
+
+
+redis-trib.rb create --replicas 1 127.0.0.1:6379  127.0.0.1:6380  127.0.0.1:6381  127.0.0.1:6382  127.0.0.1:6383  127.0.0.1:6384

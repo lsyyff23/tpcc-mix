@@ -1,0 +1,319 @@
+《C++ Primer》Edition 6
+
+8.5 函数模板
+	1 通用的函数描述，使用泛型来定义函数；
+	2 将类型（typename）做为参数传递给函数，使编译器生成该类型的函数；因此该模板特性，亦称作参数化类型（parameterized types）
+	3 通用编程；
+	4
+	template <typename T>
+	Swap(T a, T b) {
+		T tmp = a;
+		a = b;
+		b = tmp;
+	}
+	template  typename(or class) 必须的； T是数据类型也是参数；
+
+	5 模板并不创建任何函数，只是告诉编译器如何定义函数；
+	  要让编译器知道程序需要一个特定类型的函数，只需调用其模板函数即可；编译器会检查参数类型，并生成相应函数
+
+	6 函数模板不能缩短可执行程序，最终仍然会定义N个独立的函数定义；
+	  最终代码不包含任何模板；
+  8.5.1 重载的模板
+     重载模板的函数特征标不同，即参数不同；
+     并非所有的模板参数都必须是模板参数类型；
+  8.5.2 模板的局限性
+   	 + 可以处理通用int double 等类型，但struct point则不合适，不行等；
+     重载+ 或者 提供具体化的模板；
+  8.5.3 显式具体化 expilcit specialization
+     第三代具体化 ISO/ANSI C++ 标准
+     函数名的调用选择有： 非模板函数 > 显式具体化模板函数 > 模板函数； 及他们的重载版本；
+     显式具体化以template<> 开头，并通过名称来指出类型；
+  8.5.4 实例化和具体化
+     隐式实例化：使用具体类型typename -> int 的模板实例是函数定义；这种实例化方式叫隐式实例化；
+     显式实例化：explicit instantiation
+     			template void Swap<int>(int &, int &);
+     			编译器看到该声明则生成一个int类型的实例，叫显式实例化；
+     			只需声明不需要重新定义；
+     显式具体化：template<> void Swap<int>(int &, int &);
+     			 template<> void Swap(int &, int &);
+     			 不用通用模板生成Swap而是通过int来生成；必须有自己的函数定义！
+     			 在template后面加<>；
+     			 需要重新定义即实现函数；
+     在同个文件中使用同个类型的显式具体化，显式实例化将出错；
+
+     都是具体化：使用具体类型的函数定义；
+  8.5.5 编译器选择使用哪个函数版本
+  函数重载，函数模板，函数模板重载；
+    1>创建候选函数列表；
+    2>根据候选函数列表创建可行函数列表；
+    3>确定是否有最佳可行函数；
+
+  参数匹配：
+  	1> 完全匹配 --- 常规函数；
+  	2> 提升转换 char/short -> int , float -> double
+  	3> 标准转换 int -> char, long -> double ; 见第3章
+  	4> 用户定义的转换  如类声明中定义的转换
+  	完全匹配的研究：
+  	   a 完全匹配与最佳匹配
+  	   b 部分排序规则示例
+  	   c 自己选择
+  	     c. eg: template <typename T>
+  	     		T lesser(T a, T b); 	// #1
+  	     	 int lesser(int a, int b);  // #2
+  	     	int main(){
+  	     		...
+  	     		lesser<>(1, 2); // #1
+  	     		lesser(23,4);   // #2
+  	     		lesser<int>(4.1,5.2); // user #1 with int
+  	     		...
+  	     	}
+        d 多个参数的函数：找到一个所有参数的匹配度比其他都合适的函数搞，
+        				  同时至少有个参数的匹配度比其他函数高！
+  8.5.6 函数模板的发展
+	1 decltype
+	int x;
+	decltype(x) y; // make y the same type as x; include const;
+
+	template (class T1, class T2)
+	void ft(T1 x, T2 y){
+		// ...
+		decltype(x + y) xpy; //make xpy same type as x+y;
+		xpy = x + y;
+		// eq: decltype(x + y) xpy = x + y;
+		// ...
+	}
+
+	decltype(expression) var;
+	未确定类型，编译器遍历一个核对表：
+	step a: expression 未用括号包含：
+		double x = 5.5;
+		double y = 7.9;
+		double &rx = x;
+		const double *pd;
+		decltype(x) w; //w is type double
+		decltype(rx) u = y; // u is type double &
+		decltype(pd) v;	// v is type const double*
+	step b: 函数调用，var 与返回值相同
+		long indeed(int); //function indeed;
+		decltype(indeed(3)) m; // m is type long,
+		//并不会实际调用函数，编译器通过查看函数的原型来
+
+	step c: expression是左值 or (())，var 指向其类型的引用
+		double xx = 4.4;
+		decltype((xx)) r2 = xx; // r2 is double &
+		decltype(xx) w = xx;  // w is double ( step a match);
+
+	step d: abc unfit, var 与expression相同;
+		int j = 3;
+		int &k = j;
+		int &n = j;
+
+		decltype(j + 6) i1; //i1 type int
+		decltype(100L) i2; //i2 type long
+		decltype(k + n) i3; //i3 is type int; k + n not ref but int;
+
+	C++11 后置返回类型的函数声明语法；
+	template <class T1, class T2>
+	?type? gt(T1 x, T2 y){
+		...
+		return x + y;
+	}
+	此时，因 x y 非在decltype<x+y> 作用域范围内（编译器看不到），无法用decltype；
+	用如下方式--->：
+
+	templat<class T1, class T2>
+	auto gt(T1 x , T2 y) -> decltype(x + y)
+	{
+		//return x + y;
+	}
+	auto表示一个占位符，表示trailing return type提供的类型；
+
+	decltype 在 x, y 参数声明后面，因此 x y在作用域内，可以使用
+
+11
+11.1-11.2 运算符重载
+  限制：
+		重载后的运算符必须至少有一个是用户定义的数据类型， 防止重载标准的运算符
+		不能违反运算符原来的句法规则，不能修改优先级；
+		不能创造新的运算符
+		不能重载如下运算符：sizeof . .*  ::  ?: typeid const_cast dynamic_cast
+		  					reinterpret_cast static_cast
+		除如下= [] () -> 只能用成员函数重载，其他的基本可以用成员或非成员函数重载;
+
+11.3 友元
+友元函数： 拥有与该类的成员函数一样的访问权限；
+	创建友元函数
+	class Time {
+
+		friend Time operator*(double m, const Time & t);
+	}
+	既非成员函数不需成员运算符来调用，又拥有与成员函数一样的访问权限；
+	定义时不需要加friend;
+	Time operator*(double m, const Time &t);
+
+	常用的友元：重载<<运算符；
+
+
+
+友元类
+友元成员函数
+
+11.6
+   类的类型转换函数
+   必须是类成员函数、不能指定返回类型、不能有参数；
+   operate typeName();
+   如： operate double();
+
+
+12.1.2 C++的特殊成员函数
+默认成员函数有如下：（在其未定义的情况下）
+默认构造函数
+默认析构函数
+复制构造函数
+赋值运算符
+地址运算符
+
+
+=================================================================================================
+gcc编译
+
+CentOS 6.6 升级GCC G++ (当前最新GCC/G++版本为v6.1.0)
+
+没有便捷方式,
+
+yum update....   yum install 
+
+或者 添加yum 的 repo 文件 也不行, 只能更新到 4.4.7!
+
+then,  只能手动编译安装了,那么开始第一步下载源代码吧,GO!
+
+1、 获取安装包并解压
+
+wget http://ftp.gnu.org/gnu/gcc/gcc-6.1.0/gcc-6.1.0.tar.bz2
+
+tar -jxvf gcc-6.1.0.tar.bz2
+
+当然，http://ftp.gnu.org/gnu/gcc  里面有所有的gcc版本供下载，最新版本已经有6.1.0啦.
+
+建议下载.bz2的压缩包,文件更小,下载时间更少.
+
+2、 下载供编译需求的依赖项
+
+参考文献[1]中说：这个神奇的脚本文件会帮我们下载、配置、安装依赖库，可以节约我们大量的时间和精力。
+
+cd gcc-6.1.0
+
+./contrib/download_prerequisites　
+
+3、 建立一个目录供编译出的文件存放
+
+mkdir gcc-build-6.1.0
+
+cd gcc-build-6.1.0
+
+4、 生成Makefile文件
+
+../configure -enable-checking=release -enable-languages=c,c++ -disable-multilib
+
+
+5、 编译
+
+make -j4
+
+-j4选项是make对多核处理器的优化，如果不成功请使用 make，相关优化选项可以移步至参考文献[2]。
+
+（注意：此步骤非常耗时,我虚拟机耗时近3小时; 实体机近80分钟,CPU基本是满的,内存也使用不少）
+
+6、 安装
+make install
+
+(安装需要root权限!)
+
+查看安装
+
+ls /usr/local/bin | grep gcc
+
+7、 重启，然后查看gcc版本
+gcc -v
+
+8、 写个C++11 特性的程序段 测试
+tryCpp11.cc 代码省略....
+
+g++ -std=c++11 -o tryCpp11 tryCpp11.cc
+
+ 
+
+9、升级gcc，生成的动态库没有替换老版本gcc的动态库
+
+源码编译升级安装了gcc后，编译程序或运行其它程序时，有时会出现类似/usr/lib64/libstdc++.so.6: version `GLIBCXX_3.4.21' not found的问题。这是因为升级gcc时，生成的动态库没有替换老版本gcc的动态库导致的，将gcc最新版本的动态库替换系统中老版本的动态库即可解决。
+
+9.1 运行以下命令检查动态库：
+
+strings /usr/lib64/libstdc++.so.6 | grep GLIBC
+
+从输出可以看出，gcc的动态库还是旧版本的。说明出现这些问题，是因为升级gcc时，生成的动态库没有替换老版本gcc的动态库。
+
+9.2 执行以下命令，查找编译gcc时生成的最新动态库：
+
+find / -name "libstdc++.so*"
+
+将上面的最新动态库libstdc++.so.6.0.22复制到/usr/lib64目录下
+
+cd /usr/lib64
+
+cp /root/Downloads/gcc-6.1.0/gcc-build-6.1.0/stage1-x86_64-pc-linux-gnu/libstdc++-v3/src/.libs/libstdc++.so.6.0.22 ./
+
+9.3 删除原来软连接：
+
+rm -rf libstdc++.so.6
+
+9.4 将默认库的软连接指向最新动态库：
+
+ln -s libstdc++.so.6.0.22 libstdc++.so.6
+
+9.5 默认动态库升级完成。重新运行以下命令检查动态库：
+
+strings /usr/lib64/libstdc++.so.6 | grep GLIBC
+
+可以看到 输出有"GLIBCXX_3.4.21" 了
+
+[注:摘抄自http://www.linuxidc.com/Linux/2015-01/112595.htm,  http://itbilu.com/linux/management/NymXRUieg.html, 原作者编译有出错过,但是我编译没有出错过]
+
+[参考1:http://www.tuicool.com/articles/FVN7jez]
+
+[参考2:http://blog.chinaunix.net/uid-14735472-id-5546560.html]
+
+=================================================================================================
+升级gcc 4.8.5 到6.1.0时又回退版本；
+出现：
+g++: error trying to exec 'cc1plus': execvp: 没有那个文件或目录
+
+是gcc g++内部调用cc1 cc1plus时使用的版本有问题，或者引用的路劲有问题，
+重新制定cc1 cc1plus的运行版本
+ll /usr/lib/bin/cc1 查看版本；
+ ln -s /usr/libexec/gcc/x86_64-redhat-linux/4.8.2/cc1plus cc1plus
+
+查询include的搜索路径
+ [root@localhost bin]# `g++ -print-prog-name=cc1plus` -v
+忽略不存在的目录“/usr/lib/gcc/x86_64-redhat-linux/4.8.5/include-fixed”
+忽略不存在的目录“/usr/lib/gcc/x86_64-redhat-linux/4.8.5/../../../../x86_64-redhat-linux/include”
+#include "..." 搜索从这里开始：
+#include <...> 搜索从这里开始：
+ /usr/lib/gcc/x86_64-redhat-linux/4.8.5/../../../../include/c++/4.8.5
+ /usr/lib/gcc/x86_64-redhat-linux/4.8.5/../../../../include/c++/4.8.5/x86_64-redhat-linux
+ /usr/lib/gcc/x86_64-redhat-linux/4.8.5/../../../../include/c++/4.8.5/backward
+ /usr/lib/gcc/x86_64-redhat-linux/4.8.5/include
+ /usr/local/include
+ /usr/include
+搜索列表结束。
+^C
+
+
+查看库的默认版本
+sudo ldconfig -v|grep boost 
+[root@localhost bin]# 
+
+cmake 查看编译选项
+cmake . -LH
+
+
