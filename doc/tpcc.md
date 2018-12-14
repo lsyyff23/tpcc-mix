@@ -31,7 +31,7 @@ TPC-C 是TPC关于OLTP测试的改进版本，于1992-06月发布，目前版本
 TPCC的测试工具大都比较早，主要有Tpcc-mysql、DBT2、HammerDB、benchmarkSQL、sqlbench等，以下对这些一一说明：
 （参考:[汇总](https://blog.csdn.net/luke_wang/article/details/71860667))	
  
-####1. TPCC-Mysql
+#### 1. TPCC-Mysql
 主要用于mysql的测试；
 
 - git
@@ -132,7 +132,7 @@ TPCC的测试工具大都比较早，主要有Tpcc-mysql、DBT2、HammerDB、ben
 		数据不尽然准确，待分析！！！
 
 
-####2. sqlbench
+#### 2. sqlbench
 
 淘宝内部，C语言实现的TPC-C测试工具，声明支持postgresql+mysql，这里测试mysql时编译失败！！
 
@@ -222,7 +222,7 @@ TPCC的测试工具大都比较早，主要有Tpcc-mysql、DBT2、HammerDB、ben
 	https://github.com/digoal/blog/blob/master/201805/20180530_01.md   
 
  
-####3. DBT2
+#### 3. DBT2
 
 - git
 
@@ -313,7 +313,7 @@ TPCC的测试工具大都比较早，主要有Tpcc-mysql、DBT2、HammerDB、ben
 			[.]#./post-process --dir /mnt/dbt2-0.40/scripts/output/20 --xml 		失败啊！！！！
 			无法得出分析， 但看了driver.out 数据还是不好
 		
-####4. benchmarkSQL
+#### 4. benchmarkSQL
 
 - git
 
@@ -415,13 +415,13 @@ TPCC的测试工具大都比较早，主要有Tpcc-mysql、DBT2、HammerDB、ben
 		  https://github.com/andl/benchmarkSQL
 
 
-####5. hammerdb test
+#### 5. hammerdb test
 
 - git
 
 	https://www.hammerdb.com/document.html
 
-####6. sysbench 1.0
+#### 6. sysbench 1.0
 
 Lua编写的测试工具
 
@@ -445,7 +445,7 @@ Lua编写的测试工具
         total:                           1340320    -- 全部总数
 		并非标准的TPCC测试
 
-####7. linkbench
+#### 7. linkbench
 
 		非TPCC!!!
 		mariadb  use 
